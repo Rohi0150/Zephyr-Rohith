@@ -1,0 +1,127 @@
+
+/ {
+	aliases {
+		accel0 = &mpu6050;
+	};
+
+	fstab {
+		compatible = "zephyr,fstab";
+
+		sdcard {
+			compatible = "zephyr,fstab-fs";
+			mount-point = "/SD:";
+			type = "ffat";
+			disk-access = <&sdhc0>;
+			automount;
+		};
+	};
+};
+
+
+
+&i2c1 {
+
+	status = "okay";
+
+	pinctrl-0 = <&i2c1_scl_pb8 &i2c1_sda_pb9>;
+	pinctrl-names = "default";
+
+	clock-frequency = <I2C_BITRATE_FAST>;
+
+	mpu6050: mpu6050@68 {
+
+		compatible = "invensense,mpu6050";
+
+		reg = <0x68>;
+
+		int-gpios = <&gpioa 6 GPIO_ACTIVE_HIGH>;
+
+		status = "okay";
+	};
+};
+
+
+
+&usart6 {
+
+	status = "okay";
+
+	current-speed = <115200>;
+
+	pinctrl-0 = <&usart6_tx_pc6
+		     &usart6_rx_pc7>;
+
+	pinctrl-names = "default";
+
+};
+
+&spi2 {
+
+	status = "okay";
+
+	pinctrl-0 = <&spi2_nss_pb12
+		     &spi2_sck_pb13
+		     &spi2_miso_pb14
+		     &spi2_mosi_pb15>;
+
+	pinctrl-names = "default";
+
+
+	cs-gpios = <&gpiob 12 GPIO_ACTIVE_LOW>;
+
+
+	eeprom0: eeprom@0 {
+
+		compatible = "zephyr,spi-device";
+
+		reg = <0>;
+
+		spi-max-frequency = <1000000>;
+
+		status = "okay";
+
+	};
+
+};
+
+&spi3 {
+
+	status = "okay";
+
+
+	pinctrl-0 = <&spi3_sck_pb3
+		     &spi3_miso_pb4
+		     &spi3_mosi_pb5>;
+
+	pinctrl-names = "default";
+
+
+	cs-gpios = <&gpioc 0 GPIO_ACTIVE_LOW>;
+
+
+
+	sdhc0: sdhc@0 {
+
+		compatible = "zephyr,sdhc-spi-slot";
+
+		reg = <0>;
+
+		status = "okay";
+
+
+		spi-max-frequency = <200000>;
+
+
+		mmc {
+
+			compatible = "zephyr,sdmmc-disk";
+
+			disk-name = "SD";
+
+			status = "okay";
+
+		};
+
+	};
+
+};
